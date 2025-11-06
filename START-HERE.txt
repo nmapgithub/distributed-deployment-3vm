@@ -1,0 +1,191 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                    🚀 START HERE 🚀                              ║
+║     NTRO Cyber Attack Simulation - Distributed Deployment        ║
+╚══════════════════════════════════════════════════════════════════╝
+
+📁 YOU ARE HERE: /ATTACK-SIMULATION/distributed-deployment-3vm/
+
+═══════════════════════════════════════════════════════════════════
+⚡ FASTEST WAY TO DEPLOY (5 MINUTES)
+═══════════════════════════════════════════════════════════════════
+
+1. Verify VMs are accessible:
+   ssh ubuntu@192.168.15.151  (VM1 - Core + Towers)
+   ssh ubuntu@192.168.15.89   (VM2 - Database)
+   ssh ubuntu@192.168.15.120  (VM3 - Customer Portal)
+
+2. Run automated deployment:
+   ./deploy-all.sh
+
+3. Access the simulation:
+   http://192.168.15.120:9090  (Start attack here!)
+
+═══════════════════════════════════════════════════════════════════
+📚 DOCUMENTATION FILES
+═══════════════════════════════════════════════════════════════════
+
+📖 README.md
+   → Complete documentation with architecture, setup, troubleshooting
+   → Start here for detailed understanding
+
+⚡ QUICK-START.md  
+   → Fast deployment guide
+   → 2-minute attack simulation walkthrough
+   → Command-line examples
+
+✅ DEPLOYMENT-CHECKLIST.txt
+   → Step-by-step checklist
+   → Pre-deployment verification
+   → Post-deployment validation
+
+📋 DEPLOYMENT-SUMMARY.txt
+   → Quick reference
+   → All IPs, ports, and credentials
+   → Common commands
+
+═══════════════════════════════════════════════════════════════════
+📂 VM DEPLOYMENT FOLDERS
+═══════════════════════════════════════════════════════════════════
+
+vm1-core-towers/
+├── docker-compose.yml          (NTRO Portal + 6 Towers)
+├── install.sh                  (Automated installation)
+├── core-portal/               (NTRO intelligence portal)
+└── bts-tower-*/               (All 6 tower applications)
+
+vm2-database/
+├── docker-compose.yml          (PostgreSQL + pgAdmin)
+├── install.sh                  (Automated installation)
+└── init-db.sql                (Database initialization)
+
+vm3-customer-portal/
+├── docker-compose.yml          (Customer portal + SQL console)
+├── install.sh                  (Automated installation)
+└── customer-portal/           (Vulnerable web application)
+
+═══════════════════════════════════════════════════════════════════
+🎯 QUICK ATTACK SIMULATION (After Deployment)
+═══════════════════════════════════════════════════════════════════
+
+Step 1: SQL Injection
+  URL: http://192.168.15.120:9090
+  Username: ' OR '1'='1'--
+  Password: anything
+
+Step 2: Extract Credentials
+  URL: http://192.168.15.120:9090/api/query
+  Query: SELECT * FROM admin_credentials
+  Result: admin / admin123 for NTRO Portal
+
+Step 3: Lateral Movement
+  URL: http://192.168.15.151:8080
+  Login: admin / admin123
+  Result: Access to classified NTRO system
+
+Step 4: Infrastructure Compromise
+  • Click any tower on map
+  • Open terminal
+  • Execute: cat secrets.txt
+
+═══════════════════════════════════════════════════════════════════
+🔑 ALL CREDENTIALS
+═══════════════════════════════════════════════════════════════════
+
+NTRO Portal (VM1):
+  admin / admin123
+
+Customer Portal (VM3):
+  rajesh.kumar / password123
+  priya.sharma / priya@123
+  amit.patel / amit1234
+
+Database (VM2):
+  PostgreSQL: telecom_admin / telecom_db_2024
+  pgAdmin: admin@telecom.local / admin123
+
+═══════════════════════════════════════════════════════════════════
+🌐 ACCESS URLS
+═══════════════════════════════════════════════════════════════════
+
+VM1 (192.168.15.151):
+  NTRO Portal:    http://192.168.15.151:8080
+  Tower 1-6:      http://192.168.15.151:8001-8006
+
+VM2 (192.168.15.89):
+  PostgreSQL:     192.168.15.89:5432
+  pgAdmin:        http://192.168.15.89:5050
+
+VM3 (192.168.15.120):
+  Customer:       http://192.168.15.120:9090
+  SQL Console:    http://192.168.15.120:9090/api/query
+
+═══════════════════════════════════════════════════════════════════
+⚙️ MANAGEMENT COMMANDS
+═══════════════════════════════════════════════════════════════════
+
+Deploy All VMs:
+  ./deploy-all.sh
+
+Deploy Individual VM:
+  cd vm1-core-towers && ssh ubuntu@192.168.15.151 < install.sh
+
+View Logs (on VM):
+  cd ~/attack-simulation
+  docker-compose logs -f
+
+Restart Services (on VM):
+  docker-compose restart
+
+Stop Services (on VM):
+  docker-compose down
+
+Cleanup (on VM):
+  docker-compose down -v
+  docker system prune -af
+  rm -rf ~/attack-simulation
+
+═══════════════════════════════════════════════════════════════════
+🆘 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+Service not starting?
+  → docker-compose logs -f
+  → Check: docker ps
+  → Rebuild: docker-compose up -d --build
+
+Cannot access web UI?
+  → Test locally: curl http://localhost:<port>
+  → Check firewall: sudo ufw status
+  → Allow port: sudo ufw allow <port>/tcp
+
+SSH connection fails?
+  → Verify IP: ping 192.168.15.XXX
+  → Test: ssh -v ubuntu@192.168.15.XXX
+  → Copy key: ssh-copy-id ubuntu@192.168.15.XXX
+
+Need more help?
+  → Check README.md for detailed troubleshooting
+  → Review DEPLOYMENT-CHECKLIST.txt
+  → Check logs on each VM
+
+═══════════════════════════════════════════════════════════════════
+⚠️ SECURITY WARNING
+═══════════════════════════════════════════════════════════════════
+
+This is an EDUCATIONAL SIMULATION ONLY!
+
+  ✗ Do NOT use in production
+  ✗ Do NOT expose to public internet
+  ✗ Contains intentional security vulnerabilities
+  ✗ Keep on isolated/private network
+  ✓ Use only for cybersecurity training
+  ✓ Authorized environments only
+
+═══════════════════════════════════════════════════════════════════
+
+READY TO DEPLOY? Run: ./deploy-all.sh
+
+For detailed instructions, read: README.md
+For quick start, read: QUICK-START.md
+
+Good luck with your simulation! 🎯

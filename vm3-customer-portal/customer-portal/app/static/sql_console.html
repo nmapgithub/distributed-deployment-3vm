@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Console - Database Access</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            padding: 20px;
+        }
+
+        .header {
+            background: #1a1a1a;
+            padding: 20px;
+            border: 2px solid #ff0000;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #ff0000;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .warning {
+            background: #ff0000;
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .console-container {
+            background: #1a1a1a;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .query-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .buttons {
+            margin: 15px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn:hover {
+            background: #00cc00;
+        }
+
+        .btn-danger {
+            background: #ff0000;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #cc0000;
+        }
+
+        .results-container {
+            background: #1a1a1a;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 600px;
+            overflow: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #00ff00;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: #003300;
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background: #0a0a0a;
+        }
+
+        .error {
+            color: #ff0000;
+            background: #1a0000;
+            padding: 15px;
+            border: 1px solid #ff0000;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: #00ff00;
+            background: #001a00;
+            padding: 15px;
+            border: 1px solid #00ff00;
+            margin-top: 10px;
+        }
+
+        .quick-queries {
+            background: #1a1a1a;
+            border: 2px solid #ffaa00;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quick-queries h3 {
+            color: #ffaa00;
+            margin-bottom: 10px;
+        }
+
+        .quick-query {
+            background: #000;
+            padding: 5px 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-left: 3px solid #ffaa00;
+        }
+
+        .quick-query:hover {
+            background: #222;
+        }
+
+        .highlight {
+            color: #ffaa00;
+        }
+
+        .critical {
+            color: #ff0000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚠️ SQL CONSOLE - UNAUTHORIZED ACCESS DETECTED</h1>
+        <p>Direct database access interface</p>
+        <div class="warning">
+            ⛔ WARNING: This interface should NOT be publicly accessible!
+        </div>
+    </div>
+
+    <div class="quick-queries">
+        <h3>🔓 Quick Queries (Click to Execute)</h3>
+        <div class="quick-query" onclick="setQuery('SELECT * FROM customers')">
+            📋 Show all customers
+        </div>
+        <div class="quick-query" onclick="setQuery('SELECT * FROM admin_credentials')">
+            🔐 <span class="critical">Show admin credentials (CRITICAL!)</span>
+        </div>
+        <div class="quick-query" onclick="setQuery('SELECT name FROM sqlite_master WHERE type=\\'table\\'')">
+            📊 List all tables
+        </div>
+        <div class="quick-query" onclick="setQuery('SELECT username, password, full_name, phone_number FROM customers')">
+            👤 Customer credentials
+        </div>
+        <div class="quick-query" onclick="setQuery('SELECT system_name, portal_url, username, password, access_level FROM admin_credentials')">
+            🎯 <span class="critical">NTRO Portal Login Credentials</span>
+        </div>
+        <div class="quick-query" onclick="dumpDatabase()">
+            💣 <span class="critical">DUMP ENTIRE DATABASE</span>
+        </div>
+    </div>
+
+    <div class="console-container">
+        <h3>SQL Query Console</h3>
+        <textarea id="query-input" class="query-input" placeholder="Enter SQL query here...
+Example: SELECT * FROM admin_credentials"></textarea>
+        
+        <div class="buttons">
+            <button class="btn" onclick="executeQuery()">▶ Execute Query</button>
+            <button class="btn" onclick="clearQuery()">🗑️ Clear</button>
+            <button class="btn btn-danger" onclick="dumpDatabase()">💾 Dump All Data</button>
+        </div>
+    </div>
+
+    <div class="results-container" id="results">
+        <h3>Results:</h3>
+        <p style="color: #666;">Execute a query to see results...</p>
+    </div>
+
+    <script>
+        function setQuery(query) {
+            document.getElementById('query-input').value = query;
+            executeQuery();
+        }
+
+        function clearQuery() {
+            document.getElementById('query-input').value = '';
+            document.getElementById('results').innerHTML = '<h3>Results:</h3><p style="color: #666;">Execute a query to see results...</p>';
+        }
+
+        async function executeQuery() {
+            const query = document.getElementById('query-input').value.trim();
+            if (!query) {
+                alert('Please enter a SQL query');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<h3>Executing...</h3>';
+
+            try {
+                const response = await fetch('/api/execute_query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.columns && data.rows) {
+                        // Display SELECT results
+                        let html = `<div class="success">✅ Query executed successfully! Found ${data.row_count} rows.</div>`;
+                        
+                        if (data.row_count > 0) {
+                            html += '<table><thead><tr>';
+                            data.columns.forEach(col => {
+                                html += `<th>${col}</th>`;
+                            });
+                            html += '</tr></thead><tbody>';
+                            
+                            data.rows.forEach(row => {
+                                html += '<tr>';
+                                row.forEach(cell => {
+                                    html += `<td>${cell !== null ? cell : 'NULL'}</td>`;
+                                });
+                                html += '</tr>';
+                            });
+                            
+                            html += '</tbody></table>';
+                        }
+                        
+                        resultsDiv.innerHTML = html;
+                    } else {
+                        // Display non-SELECT results
+                        resultsDiv.innerHTML = `<div class="success">✅ ${data.message}</div>`;
+                    }
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function dumpDatabase() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<h3>Dumping entire database...</h3>';
+
+            try {
+                const response = await fetch('/api/database/dump');
+                const data = await response.json();
+
+                let html = `<div class="success">✅ Database dump complete! Found ${data.total_tables} tables.</div>`;
+                
+                for (const [tableName, tableData] of Object.entries(data.data)) {
+                    html += `<h3 style="color: #ffaa00; margin-top: 20px;">📋 Table: ${tableName} (${tableData.count} rows)</h3>`;
+                    
+                    if (tableData.count > 0) {
+                        html += '<table><thead><tr>';
+                        tableData.columns.forEach(col => {
+                            html += `<th>${col}</th>`;
+                        });
+                        html += '</tr></thead><tbody>';
+                        
+                        tableData.rows.forEach(row => {
+                            html += '<tr>';
+                            row.forEach(cell => {
+                                // Highlight sensitive data
+                                let cellClass = '';
+                                if (cell && typeof cell === 'string' && 
+                                    (cell.includes('password') || cell.includes('admin') || cell.includes('NTRO'))) {
+                                    cellClass = 'class="critical"';
+                                }
+                                html += `<td ${cellClass}>${cell !== null ? cell : 'NULL'}</td>`;
+                            });
+                            html += '</tr>';
+                        });
+                        
+                        html += '</tbody></table>';
+                    }
+                }
+                
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Handle Enter key (Ctrl+Enter to execute)
+        document.getElementById('query-input').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                executeQuery();
+            }
+        });
+    </script>
+</body>
+</html>
+

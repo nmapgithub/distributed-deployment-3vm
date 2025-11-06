@@ -1,0 +1,170 @@
+version: '3.8'
+
+services:
+  # NTRO Core Portal
+  core-portal:
+    build:
+      context: ./core-portal
+      dockerfile: Dockerfile
+    container_name: ntro-core-portal
+    hostname: ntro-core
+    ports:
+      - "8080:8080"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.10
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CUSTOMER_PORTAL_URL=http://192.168.15.120:9090
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 1 - Muzaffarabad
+  tower-1:
+    build:
+      context: ./bts-tower-1
+      dockerfile: Dockerfile
+    container_name: tower-1-muzaffarabad
+    hostname: tower-1-muzaffarabad
+    ports:
+      - "8001:8001"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.11
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-1
+      - TOWER_NAME=Jio Tower - Muzaffarabad
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 2 - Jhelum
+  tower-2:
+    build:
+      context: ./bts-tower-2
+      dockerfile: Dockerfile
+    container_name: tower-2-jhelum
+    hostname: tower-2-jhelum
+    ports:
+      - "8002:8002"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.12
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-2
+      - TOWER_NAME=Vodafone Idea Tower - Jhelum
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 3 - Mirpur
+  tower-3:
+    build:
+      context: ./bts-tower-3
+      dockerfile: Dockerfile
+    container_name: tower-3-mirpur
+    hostname: tower-3-mirpur
+    ports:
+      - "8003:8003"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.13
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-3
+      - TOWER_NAME=Bharti Airtel Tower - Mirpur
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 4 - Sialkot
+  tower-4:
+    build:
+      context: ./bts-tower-4
+      dockerfile: Dockerfile
+    container_name: tower-4-sialkot
+    hostname: tower-4-sialkot
+    ports:
+      - "8004:8004"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.14
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-4
+      - TOWER_NAME=BSNL Tower - Sialkot
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 5 - Gujrat
+  tower-5:
+    build:
+      context: ./bts-tower-5
+      dockerfile: Dockerfile
+    container_name: tower-5-gujrat
+    hostname: tower-5-gujrat
+    ports:
+      - "8005:8005"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.15
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-5
+      - TOWER_NAME=Reliance Jio Tower - Gujrat
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 6 - Rawalpindi
+  tower-6:
+    build:
+      context: ./bts-tower-6
+      dockerfile: Dockerfile
+    container_name: tower-6-rawalpindi
+    hostname: tower-6-rawalpindi
+    ports:
+      - "8006:8006"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.16
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-6
+      - TOWER_NAME=Vodafone Tower - Rawalpindi
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  ntro_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+

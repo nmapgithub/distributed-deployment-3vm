@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database for Telecom Data
+  telecom-db:
+    image: postgres:15-alpine
+    container_name: telecom-database
+    hostname: telecom-db
+    ports:
+      - "5432:5432"
+    networks:
+      db_network:
+        ipv4_address: 172.27.0.10
+    environment:
+      - POSTGRES_USER=telecom_admin
+      - POSTGRES_PASSWORD=telecom_db_2024
+      - POSTGRES_DB=telecom_operations
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    restart: unless-stopped
+    volumes:
+      - telecom_db_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U telecom_admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # pgAdmin for Database Management (optional web UI)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin-ui
+    hostname: pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      db_network:
+        ipv4_address: 172.27.0.11
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@telecom.local
+      - PGADMIN_DEFAULT_PASSWORD=admin123
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    restart: unless-stopped
+    depends_on:
+      - telecom-db
+
+volumes:
+  telecom_db_data:
+
+networks:
+  db_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.27.0.0/16
+

@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # Customer Portal - Vulnerable Database
+  customer-portal:
+    build:
+      context: ./customer-portal
+      dockerfile: Dockerfile
+    container_name: customer-portal
+    hostname: customer-portal
+    ports:
+      - "9090:9000"
+    networks:
+      customer_network:
+        ipv4_address: 172.26.0.10
+    environment:
+      - PYTHONUNBUFFERED=1
+      - NTRO_PORTAL_URL=http://192.168.15.151:8080
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - customer_data:/app/data
+
+volumes:
+  customer_data:
+
+networks:
+  customer_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.26.0.0/16
+

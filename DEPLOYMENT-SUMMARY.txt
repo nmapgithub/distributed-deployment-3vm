@@ -1,0 +1,108 @@
+╔══════════════════════════════════════════════════════════════════╗
+║  NTRO CYBER ATTACK SIMULATION - 3 VM DISTRIBUTED DEPLOYMENT      ║
+╚══════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────┐
+│ VM CONFIGURATION                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│ VM1: 192.168.15.151 (ubuntu/ubuntu)                             │
+│   • NTRO Core Portal (Port 8080)                                │
+│   • BTS Tower 1-6 (Ports 8001-8006)                             │
+│                                                                   │
+│ VM2: 192.168.15.89 (ubuntu/ubuntu)                              │
+│   • PostgreSQL Database (Port 5432)                             │
+│   • pgAdmin Web UI (Port 5050)                                  │
+│                                                                   │
+│ VM3: 192.168.15.120 (ubuntu/ubuntu)                             │
+│   • Customer Portal (Port 9090)                                 │
+│   • SQL Console (Vulnerable!)                                   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ DEPLOYMENT INSTRUCTIONS                                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│ AUTOMATED (RECOMMENDED):                                         │
+│   cd distributed-deployment-3vm                                  │
+│   ./deploy-all.sh                                                │
+│                                                                   │
+│ MANUAL:                                                          │
+│   1. Copy vm1-core-towers/* to VM1                              │
+│   2. Copy vm2-database/* to VM2                                 │
+│   3. Copy vm3-customer-portal/* to VM3                          │
+│   4. Run install.sh on each VM                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ ACCESS URLS                                                      │
+├─────────────────────────────────────────────────────────────────┤
+│ NTRO Portal:                                                     │
+│   http://192.168.15.151:8080                                    │
+│   Login: admin / admin123                                       │
+│                                                                   │
+│ Customer Portal:                                                 │
+│   http://192.168.15.120:9090                                    │
+│   SQL Console: http://192.168.15.120:9090/api/query            │
+│                                                                   │
+│ Database:                                                        │
+│   Host: 192.168.15.89:5432                                      │
+│   pgAdmin: http://192.168.15.89:5050                           │
+│                                                                   │
+│ Towers:                                                          │
+│   http://192.168.15.151:8001-8006                              │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ ATTACK SIMULATION FLOW                                           │
+├─────────────────────────────────────────────────────────────────┤
+│ 1. SQL Injection                                                 │
+│    → http://192.168.15.120:9090                                 │
+│    → Username: ' OR '1'='1'--                                   │
+│                                                                   │
+│ 2. Extract Credentials                                           │
+│    → http://192.168.15.120:9090/api/query                       │
+│    → Query: SELECT * FROM admin_credentials                     │
+│                                                                   │
+│ 3. Lateral Movement                                              │
+│    → http://192.168.15.151:8080                                 │
+│    → Use: admin / admin123                                      │
+│                                                                   │
+│ 4. Infrastructure Compromise                                     │
+│    → Access towers and execute commands                         │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ QUICK COMMANDS                                                   │
+├─────────────────────────────────────────────────────────────────┤
+│ View Logs:                                                       │
+│   ssh ubuntu@192.168.15.XXX                                     │
+│   cd ~/attack-simulation                                        │
+│   docker-compose logs -f                                        │
+│                                                                   │
+│ Restart Services:                                                │
+│   docker-compose restart                                        │
+│                                                                   │
+│ Stop Services:                                                   │
+│   docker-compose down                                           │
+│                                                                   │
+│ Rebuild:                                                         │
+│   docker-compose up -d --build                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+FILES INCLUDED:
+  ✓ deploy-all.sh          - Automated deployment to all VMs
+  ✓ README.md              - Comprehensive documentation
+  ✓ QUICK-START.md         - Fast deployment guide
+  ✓ vm1-core-towers/       - Complete VM1 setup
+  ✓ vm2-database/          - Complete VM2 setup
+  ✓ vm3-customer-portal/   - Complete VM3 setup
+
+SECURITY NOTE:
+  ⚠️  This is for EDUCATIONAL purposes only!
+  ⚠️  Contains intentional vulnerabilities
+  ⚠️  Do NOT use in production
+  ⚠️  Keep on isolated network
+
+For detailed instructions, see README.md
+For quick setup, see QUICK-START.md
+

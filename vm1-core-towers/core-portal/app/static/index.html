@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTRO NOC - Network Operations Dashboard [CLASSIFIED]</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            margin: 0;
+            padding: 0;
+        }
+
+        .classification-strip {
+            background: #d32f2f;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            font-weight: bold;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            padding: 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            border-bottom: 3px solid #d32f2f;
+        }
+
+        .header-content {
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .agency-badge {
+            font-size: 32px;
+        }
+
+        .header-text h1 {
+            font-size: 24px;
+            margin: 0;
+            letter-spacing: 3px;
+            color: #fff;
+        }
+
+        .header-text .subtitle {
+            font-size: 12px;
+            color: #ffd700;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            padding: 8px 20px;
+            background: #d32f2f;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn:hover {
+            background: #b71c1c;
+        }
+
+        .clearance-badge {
+            background: #1a1a1a;
+            border: 1px solid #d32f2f;
+            padding: 5px 15px;
+            border-radius: 3px;
+            font-size: 11px;
+            color: #ff5252;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sidebar {
+            width: 400px;
+            background: #16213e;
+            padding: 20px;
+            overflow-y: auto;
+            border-left: 2px solid #667eea;
+        }
+
+        .tower-card {
+            background: #0f3460;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tower-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .tower-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: #00ff88;
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .status-inactive {
+            background: #ff4444;
+        }
+
+        .status-powerdown {
+            background: #ff4444;
+            box-shadow: 0 0 10px #ff4444;
+        }
+
+        .tower-card.powered-off {
+            border-color: #ff4444;
+            background: #2a1616;
+        }
+
+        .tower-card.powered-off h3 {
+            color: #ff4444;
+        }
+
+        .power-warning {
+            background: #ff4444;
+            color: #fff;
+            padding: 8px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+            text-align: center;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.5; }
+        }
+
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e68900;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #666;
+        }
+
+        .tower-info {
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .tower-info p {
+            margin: 5px 0;
+        }
+
+        .tower-info strong {
+            color: #aaa;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .tower-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-danger {
+            background: #ff4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #cc0000;
+        }
+
+        .btn-success {
+            background: #00ff88;
+            color: #1a1a2e;
+        }
+
+        .btn-success:hover {
+            background: #00cc6a;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #16213e;
+            padding: 30px;
+            border-radius: 10px;
+            width: 600px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .terminal {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            min-height: 300px;
+            margin-bottom: 15px;
+            overflow-y: auto;
+        }
+
+        .terminal-line {
+            margin: 5px 0;
+        }
+
+        .terminal-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .terminal-input input {
+            flex: 1;
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .metric-card {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .metric-card h4 {
+            color: #667eea;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .metric-card .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .endpoint-list {
+            list-style: none;
+        }
+
+        .endpoint-list li {
+            background: #0f3460;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .loading-spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="classification-strip">
+            🔒 TOP SECRET // NOFORN // AUTHORIZED PERSONNEL ONLY
+        </div>
+        <div class="header-content">
+            <div class="header-title">
+                <div class="agency-badge">🛡️</div>
+                <div class="header-text">
+                    <h1>NTRO - Network Operations Center</h1>
+                    <p class="subtitle">Strategic Telecom Surveillance & Intelligence Platform</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <span class="clearance-badge">🔐 TOP SECRET</span>
+                <span>Operator: <strong id="username">Admin</strong></span>
+                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+
+        <div class="sidebar">
+            <h2 style="margin-bottom: 20px;">🗼 BTS Tower Network</h2>
+            <div id="towers-list">
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terminal Modal -->
+    <div id="terminal-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="terminal-title">Terminal Access</h2>
+                <button class="close-btn" onclick="closeModal('terminal-modal')">&times;</button>
+            </div>
+            <div class="terminal" id="terminal-output"></div>
+            <div class="terminal-input">
+                <input type="text" id="command-input" placeholder="Enter command..." />
+                <button class="btn btn-success" onclick="executeCommand()">Execute</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="details-title">Tower Details</h2>
+                <button class="close-btn" onclick="closeModal('details-modal')">&times;</button>
+            </div>
+            <div id="details-content"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map;
+        let towers = [];
+        let currentTower = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const username = localStorage.getItem('username');
+            if (!username) {
+                window.location.href = '/login';
+                return;
+            }
+            document.getElementById('username').textContent = username;
+
+            initMap();
+            loadTowers();
+        });
+
+        function initMap() {
+            // Center on Pakistan region
+            map = L.map('map').setView([33.0, 73.5], 7);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+        }
+
+        async function loadTowers() {
+            try {
+                const response = await fetch('/api/towers');
+                const data = await response.json();
+                towers = data.towers;
+
+                displayTowers();
+                addTowersToMap();
+            } catch (error) {
+                console.error('Error loading towers:', error);
+                document.getElementById('towers-list').innerHTML = '<p>Error loading towers</p>';
+            }
+        }
+
+        function displayTowers() {
+            const container = document.getElementById('towers-list');
+            container.innerHTML = '';
+
+            towers.forEach(tower => {
+                const card = document.createElement('div');
+                card.className = 'tower-card';
+                
+                const isPoweredOff = tower.status === 'UNEXPECTED POWER DOWN' || tower.powered_off;
+                const statusClass = isPoweredOff ? 'status-powerdown' : 
+                                  (tower.status === 'active' ? 'status-active' : 'status-inactive');
+                
+                if (isPoweredOff) {
+                    card.classList.add('powered-off');
+                }
+                
+                const powerWarning = isPoweredOff ? 
+                    '<div class="power-warning">⚠️ UNEXPECTED POWER DOWN ⚠️</div>' : '';
+                
+                const powerButton = isPoweredOff ? 
+                    `<button class="btn btn-success" onclick="powerOnTower('${tower.id}')">
+                        ⚡ Restore Power
+                    </button>` :
+                    `<button class="btn btn-warning" onclick="powerOffTower('${tower.id}')">
+                        🔌 Power Off
+                    </button>`;
+                
+                card.innerHTML = `
+                    <h3>
+                        <span class="status-indicator ${statusClass} pulse"></span>
+                        ${tower.name}
+                    </h3>
+                    ${powerWarning}
+                    <div class="tower-info">
+                        <p><strong>Location:</strong> ${tower.location}</p>
+                        <p><strong>IP Address:</strong> ${tower.ip}</p>
+                        <p><strong>Port:</strong> ${tower.port}</p>
+                        <p><strong>Status:</strong> ${tower.status.toUpperCase()}</p>
+                    </div>
+                    <div class="tower-actions">
+                        <button class="btn btn-primary" onclick="showDetails('${tower.id}')">
+                            View Details
+                        </button>
+                        <button class="btn btn-danger" onclick="openTerminal('${tower.id}')">
+                            CMD Terminal
+                        </button>
+                        ${powerButton}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        let towerMarkers = [];
+
+        function addTowersToMap() {
+            // Clear existing markers
+            towerMarkers.forEach(marker => map.removeLayer(marker));
+            towerMarkers = [];
+
+            // Draw connections between towers first (so they appear under markers)
+            drawTowerConnections();
+
+            towers.forEach(tower => {
+                const isPoweredOff = tower.status === 'UNEXPECTED POWER DOWN' || tower.powered_off;
+                
+                const iconColor = isPoweredOff ? '#ff4444' : '#667eea';
+                const iconShadow = isPoweredOff ? '0 0 20px #ff4444' : '0 0 20px #667eea';
+                const iconEmoji = isPoweredOff ? '⚠️' : '🗼';
+                
+                const towerIcon = L.divIcon({
+                    className: 'custom-icon',
+                    html: `<div style="background: ${iconColor}; color: white; padding: 10px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: ${iconShadow};">${iconEmoji}</div>`,
+                    iconSize: [40, 40]
+                });
+
+                const statusText = isPoweredOff ? 
+                    '<span style="color: #ff4444; font-weight: bold;">⚠️ UNEXPECTED POWER DOWN</span>' : 
+                    '<span style="color: #00ff88;">● ACTIVE</span>';
+
+                const marker = L.marker([tower.latitude, tower.longitude], { icon: towerIcon })
+                    .addTo(map)
+                    .bindPopup(`
+                        <strong>${tower.name}</strong><br>
+                        ${tower.location}<br>
+                        IP: ${tower.ip}:${tower.port}<br>
+                        Status: ${statusText}<br>
+                        <button onclick="showDetails('${tower.id}')" style="margin-top: 10px; padding: 5px 10px; background: #667eea; color: white; border: none; border-radius: 3px; cursor: pointer;" ${isPoweredOff ? 'disabled' : ''}>Details</button>
+                    `);
+
+                // Animate marker
+                marker.on('mouseover', function() {
+                    this.openPopup();
+                });
+
+                towerMarkers.push(marker);
+            });
+        }
+
+        function drawTowerConnections() {
+            // Define connections between towers (mesh network)
+            const connections = [
+                [0, 1], // Muzaffarabad to Jhelum
+                [0, 3], // Muzaffarabad to Sialkot
+                [1, 2], // Jhelum to Mirpur
+                [1, 3], // Jhelum to Sialkot
+                [2, 3], // Mirpur to Sialkot
+                [3, 4], // Sialkot to Gujrat
+                [3, 5], // Sialkot to Rawalpindi
+                [4, 5], // Gujrat to Rawalpindi
+                [1, 5], // Jhelum to Rawalpindi
+            ];
+
+            connections.forEach(([idx1, idx2]) => {
+                if (towers[idx1] && towers[idx2]) {
+                    const tower1 = towers[idx1];
+                    const tower2 = towers[idx2];
+                    
+                    // Create animated polyline
+                    const line = L.polyline(
+                        [[tower1.latitude, tower1.longitude], [tower2.latitude, tower2.longitude]],
+                        {
+                            color: '#00ff88',
+                            weight: 2,
+                            opacity: 0.6,
+                            dashArray: '10, 10',
+                            className: 'connection-line'
+                        }
+                    ).addTo(map);
+
+                    // Animate the line
+                    let offset = 0;
+                    setInterval(() => {
+                        offset = (offset + 1) % 20;
+                        line.setStyle({ dashOffset: -offset });
+                    }, 100);
+                }
+            });
+        }
+
+        async function showDetails(towerId) {
+            currentTower = towers.find(t => t.id === towerId);
+            if (!currentTower) return;
+
+            const modal = document.getElementById('details-modal');
+            const title = document.getElementById('details-title');
+            const content = document.getElementById('details-content');
+
+            title.textContent = `${currentTower.name} - Details`;
+            
+            // Check if tower is powered off
+            const isPoweredOff = currentTower.status === 'UNEXPECTED POWER DOWN' || currentTower.powered_off;
+            
+            if (isPoweredOff) {
+                // Show power down warning
+                content.innerHTML = `
+                    <div style="background: #2a1616; border: 3px solid #ff4444; border-radius: 10px; padding: 30px; text-align: center;">
+                        <div style="font-size: 64px; margin-bottom: 20px;">⚠️</div>
+                        <h2 style="color: #ff4444; margin-bottom: 15px; font-size: 28px;">UNEXPECTED POWER DOWN</h2>
+                        <div class="power-warning" style="margin: 20px 0; font-size: 16px;">
+                            🚨 CRITICAL ALERT 🚨
+                        </div>
+                        <p style="font-size: 16px; line-height: 1.8; margin: 20px 0;">
+                            Tower <strong>${currentTower.name}</strong> has experienced an unexpected power failure.<br><br>
+                            <strong style="color: #ff4444;">Status:</strong> OFFLINE<br>
+                            <strong style="color: #ff4444;">Location:</strong> ${currentTower.location}<br>
+                            <strong style="color: #ff4444;">IP Address:</strong> ${currentTower.ip}:${currentTower.port}<br><br>
+                            All services and communications are currently unavailable.<br>
+                            Network metrics cannot be retrieved at this time.
+                        </p>
+                        <div style="background: #1a0a0a; padding: 15px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #ff4444;">
+                            <strong style="color: #ff9800;">⚡ Action Required:</strong><br>
+                            Please restore power to resume normal operations.
+                        </div>
+                        <button class="btn btn-success" onclick="closeModal('details-modal'); powerOnTower('${towerId}')" style="margin-top: 20px; padding: 12px 30px; font-size: 16px;">
+                            ⚡ Restore Power Now
+                        </button>
+                    </div>
+                `;
+                modal.style.display = 'flex';
+                return;
+            }
+
+            // Normal flow for active towers
+            content.innerHTML = '<div class="loading-spinner"></div>';
+            modal.style.display = 'flex';
+
+            try {
+                const [metricsRes, configRes] = await Promise.all([
+                    fetch(`/api/towers/${towerId}/metrics`),
+                    fetch(`/api/towers/${towerId}/config`)
+                ]);
+
+                const metrics = await metricsRes.json();
+                const config = await configRes.json();
+
+                content.innerHTML = `
+                    <h3>Network Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <h4>Active Connections</h4>
+                            <div class="value">${metrics.connections || 'N/A'}</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Signal Strength</h4>
+                            <div class="value">${metrics.signal_strength || 'N/A'}%</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Data Transfer</h4>
+                            <div class="value">${metrics.data_transfer || 'N/A'} MB</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Uptime</h4>
+                            <div class="value">${metrics.uptime || 'N/A'}h</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 20px;">Configuration</h3>
+                    <div class="tower-info">
+                        <p><strong>Frequency:</strong> ${config.frequency || 'N/A'}</p>
+                        <p><strong>Coverage:</strong> ${config.coverage || 'N/A'}</p>
+                        <p><strong>Technology:</strong> ${config.technology || 'N/A'}</p>
+                    </div>
+
+                    <h3 style="margin-top: 20px;">Available API Endpoints</h3>
+                    <ul class="endpoint-list">
+                        ${currentTower.endpoints.map(ep => `
+                            <li>http://${currentTower.ip}:${currentTower.port}${ep}</li>
+                        `).join('')}
+                    </ul>
+                `;
+            } catch (error) {
+                content.innerHTML = '<p>Error loading tower details</p>';
+            }
+        }
+
+        function openTerminal(towerId) {
+            currentTower = towers.find(t => t.id === towerId);
+            if (!currentTower) return;
+
+            const modal = document.getElementById('terminal-modal');
+            const title = document.getElementById('terminal-title');
+            const output = document.getElementById('terminal-output');
+
+            // Check if tower is powered off
+            const isPoweredOff = currentTower.status === 'UNEXPECTED POWER DOWN' || currentTower.powered_off;
+
+            if (isPoweredOff) {
+                title.textContent = `Terminal: ${currentTower.name} - ACCESS DENIED`;
+                output.innerHTML = `
+                    <div class="terminal-line" style="color: #ff4444;">=======================================</div>
+                    <div class="terminal-line" style="color: #ff4444;">⚠️  TERMINAL ACCESS DENIED  ⚠️</div>
+                    <div class="terminal-line" style="color: #ff4444;">=======================================</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line">Connection failed: ${currentTower.name}</div>
+                    <div class="terminal-line">IP: ${currentTower.ip}:${currentTower.port}</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line" style="color: #ff9800;">Error: UNEXPECTED POWER DOWN</div>
+                    <div class="terminal-line" style="color: #ff9800;">Status: Tower is offline</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line">Unable to establish connection.</div>
+                    <div class="terminal-line">Tower must be powered on to access terminal.</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line" style="color: #00ff88;">💡 Tip: Use the "⚡ Restore Power" button to bring the tower back online.</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line" style="color: #ff4444;">=======================================</div>
+                `;
+                modal.style.display = 'flex';
+                return;
+            }
+
+            // Normal flow for active towers
+            title.textContent = `Terminal: ${currentTower.name}`;
+            output.innerHTML = `
+                <div class="terminal-line">Connected to ${currentTower.name}</div>
+                <div class="terminal-line">IP: ${currentTower.ip}:${currentTower.port}</div>
+                <div class="terminal-line">Type 'help' for available commands</div>
+                <div class="terminal-line">=======================================</div>
+            `;
+
+            modal.style.display = 'flex';
+
+            // Focus input
+            document.getElementById('command-input').focus();
+        }
+
+        async function executeCommand() {
+            if (!currentTower) return;
+
+            const input = document.getElementById('command-input');
+            const command = input.value.trim();
+            
+            if (!command) return;
+
+            const output = document.getElementById('terminal-output');
+            output.innerHTML += `<div class="terminal-line">$ ${command}</div>`;
+
+            try {
+                const response = await fetch('/api/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tower_id: currentTower.id,
+                        command: command
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.output) {
+                    output.innerHTML += `<div class="terminal-line">${result.output}</div>`;
+                } else if (result.error) {
+                    output.innerHTML += `<div class="terminal-line" style="color: #ff4444;">${result.error}</div>`;
+                }
+            } catch (error) {
+                output.innerHTML += `<div class="terminal-line" style="color: #ff4444;">Error: ${error.message}</div>`;
+            }
+
+            output.scrollTop = output.scrollHeight;
+            input.value = '';
+        }
+
+        // Allow Enter key to execute command
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && document.getElementById('terminal-modal').style.display === 'flex') {
+                executeCommand();
+            }
+        });
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        async function powerOffTower(towerId) {
+            if (!confirm(`⚠️ WARNING: Power off ${towers.find(t => t.id === towerId)?.name}?\n\nThis will simulate an UNEXPECTED POWER DOWN.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/towers/${towerId}/poweroff`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Immediately reload towers to reflect change
+                    await loadTowers();
+                    
+                    alert(`🔌 ${result.message}\n\nStatus: UNEXPECTED POWER DOWN`);
+                }
+            } catch (error) {
+                console.error('Error powering off tower:', error);
+                alert('Failed to power off tower');
+            }
+        }
+
+        async function powerOnTower(towerId) {
+            try {
+                const response = await fetch(`/api/towers/${towerId}/poweron`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Immediately reload towers to reflect change
+                    await loadTowers();
+                    
+                    alert(`⚡ ${result.message}\n\nTower restored to normal operation.`);
+                }
+            } catch (error) {
+                console.error('Error powering on tower:', error);
+                alert('Failed to restore tower power');
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login';
+        }
+
+        // Refresh towers every 5 seconds
+        setInterval(loadTowers, 5000);
+    </script>
+</body>
+</html>
+

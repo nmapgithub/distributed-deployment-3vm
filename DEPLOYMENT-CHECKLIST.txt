@@ -1,0 +1,173 @@
+╔══════════════════════════════════════════════════════════════════╗
+║         DEPLOYMENT CHECKLIST - 3 VM DISTRIBUTED SETUP            ║
+╚══════════════════════════════════════════════════════════════════╝
+
+PRE-DEPLOYMENT VERIFICATION
+═══════════════════════════════════════════════════════════════════
+
+VM1 (192.168.15.151) - Core Infrastructure
+  [ ] VM is powered on and accessible
+  [ ] SSH is enabled: ssh ubuntu@192.168.15.151
+  [ ] Docker is installed: docker --version
+  [ ] Ports 8080, 8001-8006 are available
+  [ ] Ubuntu user has sudo access
+  [ ] Minimum 4GB RAM, 20GB disk
+
+VM2 (192.168.15.89) - Database Server  
+  [ ] VM is powered on and accessible
+  [ ] SSH is enabled: ssh ubuntu@192.168.15.89
+  [ ] Docker is installed: docker --version
+  [ ] Ports 5432, 5050 are available
+  [ ] Ubuntu user has sudo access
+  [ ] Minimum 2GB RAM, 10GB disk
+
+VM3 (192.168.15.120) - Customer Portal
+  [ ] VM is powered on and accessible
+  [ ] SSH is enabled: ssh ubuntu@192.168.15.120
+  [ ] Docker is installed: docker --version
+  [ ] Port 9090 is available
+  [ ] Ubuntu user has sudo access
+  [ ] Minimum 2GB RAM, 10GB disk
+
+Local Machine Requirements
+  [ ] SSH client installed
+  [ ] Can connect to all 3 VMs
+  [ ] Have deployment files ready
+
+═══════════════════════════════════════════════════════════════════
+DEPLOYMENT STEPS
+═══════════════════════════════════════════════════════════════════
+
+OPTION A: AUTOMATED (Recommended)
+──────────────────────────────────────────────────────────────────
+  [ ] cd distributed-deployment-3vm
+  [ ] chmod +x deploy-all.sh
+  [ ] ./deploy-all.sh
+  [ ] Wait for deployment to complete (~10 minutes)
+  [ ] Verify all services are running
+
+OPTION B: MANUAL
+──────────────────────────────────────────────────────────────────
+VM1 Deployment:
+  [ ] cd vm1-core-towers
+  [ ] scp -r * ubuntu@192.168.15.151:~/attack-simulation/
+  [ ] ssh ubuntu@192.168.15.151
+  [ ] cd ~/attack-simulation && sudo bash install.sh
+  [ ] Verify: curl http://localhost:8080/health
+
+VM2 Deployment:
+  [ ] cd vm2-database
+  [ ] scp -r * ubuntu@192.168.15.89:~/attack-simulation/
+  [ ] ssh ubuntu@192.168.15.89
+  [ ] cd ~/attack-simulation && sudo bash install.sh
+  [ ] Verify: docker ps | grep telecom-database
+
+VM3 Deployment:
+  [ ] cd vm3-customer-portal
+  [ ] scp -r * ubuntu@192.168.15.120:~/attack-simulation/
+  [ ] ssh ubuntu@192.168.15.120
+  [ ] cd ~/attack-simulation && sudo bash install.sh
+  [ ] Verify: curl http://localhost:9000/health
+
+═══════════════════════════════════════════════════════════════════
+POST-DEPLOYMENT VERIFICATION
+═══════════════════════════════════════════════════════════════════
+
+VM1 Services
+  [ ] Core Portal: http://192.168.15.151:8080
+  [ ] Tower 1: http://192.168.15.151:8001/health
+  [ ] Tower 2: http://192.168.15.151:8002/health
+  [ ] Tower 3: http://192.168.15.151:8003/health
+  [ ] Tower 4: http://192.168.15.151:8004/health
+  [ ] Tower 5: http://192.168.15.151:8005/health
+  [ ] Tower 6: http://192.168.15.151:8006/health
+  [ ] Can login: admin/admin123
+
+VM2 Services
+  [ ] PostgreSQL: telnet 192.168.15.89 5432
+  [ ] pgAdmin UI: http://192.168.15.89:5050
+  [ ] Database has data: docker exec -it telecom-database psql -U telecom_admin -d telecom_operations -c "SELECT COUNT(*) FROM towers;"
+
+VM3 Services
+  [ ] Customer Portal: http://192.168.15.120:9090
+  [ ] SQL Console: http://192.168.15.120:9090/api/query
+  [ ] Can login: rajesh.kumar/password123
+
+Integration Tests
+  [ ] SQL Injection works: ' OR '1'='1'-- in customer login
+  [ ] Can extract credentials: SELECT * FROM admin_credentials
+  [ ] NTRO login works with stolen creds
+  [ ] Towers visible on NTRO map
+  [ ] Can open tower terminals
+  [ ] Can execute commands on towers
+
+═══════════════════════════════════════════════════════════════════
+ATTACK SIMULATION VALIDATION
+═══════════════════════════════════════════════════════════════════
+
+Phase 1: Initial Compromise
+  [ ] Access: http://192.168.15.120:9090
+  [ ] SQL Inject: ' OR '1'='1'--
+  [ ] Bypass successful
+
+Phase 2: Credential Extraction
+  [ ] Access SQL Console: http://192.168.15.120:9090/api/query
+  [ ] Execute: SELECT * FROM admin_credentials
+  [ ] Found NTRO credentials: admin/admin123
+
+Phase 3: Lateral Movement
+  [ ] Access: http://192.168.15.151:8080
+  [ ] Login with: admin/admin123
+  [ ] Access granted to NTRO portal
+
+Phase 4: Infrastructure Access
+  [ ] See 6 towers on map
+  [ ] Click tower > see details
+  [ ] Open terminal > execute command
+  [ ] Read secrets: cat secrets.txt
+
+═══════════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+If Service Won't Start:
+  [ ] Check logs: docker-compose logs -f
+  [ ] Check ports: sudo netstat -tulpn | grep <port>
+  [ ] Restart Docker: sudo systemctl restart docker
+  [ ] Rebuild: docker-compose up -d --build
+
+If Cannot Access Web UI:
+  [ ] Check firewall: sudo ufw status
+  [ ] Test locally: curl http://localhost:<port>
+  [ ] Check container: docker ps
+  [ ] View logs: docker logs <container_name>
+
+If SSH Fails:
+  [ ] Verify IP: ping 192.168.15.XXX
+  [ ] Check SSH: sudo systemctl status ssh
+  [ ] Test password: ssh ubuntu@192.168.15.XXX
+  [ ] Copy key: ssh-copy-id ubuntu@192.168.15.XXX
+
+If Database Won't Connect:
+  [ ] Check container: docker ps | grep postgres
+  [ ] Test connection: docker exec -it telecom-database psql -U telecom_admin
+  [ ] Check logs: docker logs telecom-database
+  [ ] Verify init: docker exec telecom-database psql -U telecom_admin -d telecom_operations -c "\dt"
+
+═══════════════════════════════════════════════════════════════════
+CLEANUP (After Demo)
+═══════════════════════════════════════════════════════════════════
+
+On Each VM:
+  [ ] ssh ubuntu@192.168.15.XXX
+  [ ] cd ~/attack-simulation
+  [ ] docker-compose down -v
+  [ ] docker system prune -af
+  [ ] rm -rf ~/attack-simulation
+
+═══════════════════════════════════════════════════════════════════
+
+DATE DEPLOYED: _______________
+DEPLOYED BY:   _______________
+NOTES: _______________________________________________________
+_______________________________________________________________

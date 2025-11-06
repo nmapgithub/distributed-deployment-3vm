@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTRO NOC - Classified Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+            position: relative;
+        }
+
+        .classification-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #d32f2f;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 1px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .classification-banner-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #d32f2f;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        .login-container {
+            background: #0f3460;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            width: 450px;
+            max-width: 90%;
+            border: 2px solid #d32f2f;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .agency-seal {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .logo h1 {
+            color: #fff;
+            font-size: 42px;
+            margin-bottom: 5px;
+            letter-spacing: 8px;
+            font-weight: 900;
+        }
+
+        .logo .subtitle {
+            color: #ffd700;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        .logo .full-name {
+            color: #aaa;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .classification-box {
+            background: rgba(211, 47, 47, 0.1);
+            border: 2px solid #d32f2f;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .classification-box strong {
+            color: #ff5252;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .classification-box small {
+            color: #999;
+            font-size: 11px;
+        }
+
+        .warning-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .security-notice {
+            background: #1a1a1a;
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            margin-top: 20px;
+            font-size: 11px;
+            color: #ff9800;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #fff;
+            font-weight: 500;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #555;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            background: #1a1a2e;
+            color: #fff;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #d32f2f;
+            box-shadow: 0 0 10px rgba(211, 47, 47, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(211, 47, 47, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: #ff4444;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            border: 1px solid #ff0000;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #d32f2f;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="classification-banner">
+        🔒 TOP SECRET // NOFORN // AUTHORIZED ACCESS ONLY
+    </div>
+    
+    <div class="login-container">
+        <div class="logo">
+            <div class="agency-seal">🛡️</div>
+            <h1>NTRO</h1>
+            <p class="subtitle">Network Operations Center</p>
+            <p class="full-name">National Technical Research Organisation</p>
+        </div>
+
+        <div class="classification-box">
+            <div class="warning-icon">⚠️</div>
+            <strong>CLASSIFIED - TOP SECRET</strong>
+            Strategic Telecom Surveillance System<br>
+            <small>Government of India • Ministry of Defence</small>
+        </div>
+
+        <div id="error-message" class="error-message"></div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+        </div>
+
+        <div class="security-notice">
+            ⚠️ <strong>UNAUTHORIZED ACCESS IS PROHIBITED</strong><br>
+            Violation punishable under Official Secrets Act 1923<br>
+            All access attempts are monitored and logged
+        </div>
+    </div>
+
+    <div class="classification-banner-bottom">
+        🔒 TOP SECRET // NOFORN // AUTHORIZED ACCESS ONLY
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const errorMessage = document.getElementById('error-message');
+        const loading = document.getElementById('loading');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Hide error and show loading
+            errorMessage.style.display = 'none';
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                loading.style.display = 'none';
+
+                if (data.success) {
+                    // Store token (in real app, use secure storage)
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('username', username);
+                    
+                    // Redirect to dashboard
+                    window.location.href = '/dashboard';
+                } else {
+                    errorMessage.textContent = data.message;
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                errorMessage.textContent = 'Network error. Please try again.';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
+
