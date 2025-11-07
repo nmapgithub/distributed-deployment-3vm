@@ -20,8 +20,10 @@ ADMIN_CREDENTIALS = {
 }
 
 # BTS Tower Configuration
-TOWERS = {
-    "tower-1": {
+DEFAULT_ENDPOINTS = ["/status", "/metrics", "/config", "/execute"]
+
+TOWER_DEFINITIONS = [
+    {
         "id": "tower-1",
         "name": "Jio Tower - Muzaffarabad",
         "location": "Muzaffarabad, Azad Kashmir, Pakistan",
@@ -29,94 +31,208 @@ TOWERS = {
         "longitude": 73.4711,
         "ip": "192.168.15.151",
         "port": 8001,
-        "status": "active",
-        "endpoints": [
-            "/status",
-            "/metrics",
-            "/config",
-            "/execute"
-        ]
+        "status": "active"
     },
-    "tower-2": {
+    {
         "id": "tower-2",
         "name": "Vodafone Idea Tower - Jhelum",
         "location": "Jhelum, Punjab, Pakistan",
         "latitude": 32.9333,
         "longitude": 73.7333,
-        "ip": "192.168.15.151",
+        "ip": "192.168.15.152",
         "port": 8002,
-        "status": "active",
-        "endpoints": [
-            "/status",
-            "/metrics",
-            "/config",
-            "/execute"
-        ]
+        "status": "active"
     },
-    "tower-3": {
+    {
         "id": "tower-3",
         "name": "Bharti Airtel Tower - Mirpur",
         "location": "Mirpur, Azad Kashmir, Pakistan",
         "latitude": 33.1478,
         "longitude": 73.7514,
-        "ip": "192.168.15.151",
+        "ip": "192.168.15.153",
         "port": 8003,
-        "status": "active",
-        "endpoints": [
-            "/status",
-            "/metrics",
-            "/config",
-            "/execute"
-        ]
+        "status": "active"
     },
-    "tower-4": {
+    {
         "id": "tower-4",
         "name": "BSNL Tower - Sialkot",
         "location": "Sialkot, Punjab, Pakistan",
         "latitude": 32.4945,
         "longitude": 74.5229,
-        "ip": "192.168.15.151",
+        "ip": "192.168.15.154",
         "port": 8004,
-        "status": "active",
-        "endpoints": [
-            "/status",
-            "/metrics",
-            "/config",
-            "/execute"
-        ]
+        "status": "active"
     },
-    "tower-5": {
+    {
         "id": "tower-5",
         "name": "Reliance Jio Tower - Gujrat",
         "location": "Gujrat, Punjab, Pakistan",
         "latitude": 32.5739,
         "longitude": 74.0776,
-        "ip": "192.168.15.151",
+        "ip": "192.168.15.155",
         "port": 8005,
-        "status": "active",
-        "endpoints": [
-            "/status",
-            "/metrics",
-            "/config",
-            "/execute"
-        ]
+        "status": "active"
     },
-    "tower-6": {
+    {
         "id": "tower-6",
         "name": "Vodafone Tower - Rawalpindi",
         "location": "Rawalpindi, Punjab, Pakistan",
         "latitude": 33.5651,
         "longitude": 73.0169,
-        "ip": "192.168.15.151",
+        "ip": "192.168.15.156",
         "port": 8006,
-        "status": "active",
-        "endpoints": [
-            "/status",
-            "/metrics",
-            "/config",
-            "/execute"
-        ]
+        "status": "active"
+    },
+    {
+        "id": "tower-7",
+        "name": "Zong Tower - Islamabad",
+        "location": "Islamabad Capital Territory, Pakistan",
+        "latitude": 33.6844,
+        "longitude": 73.0479,
+        "ip": "192.168.15.157",
+        "port": 8007,
+        "status": "active"
+    },
+    {
+        "id": "tower-8",
+        "name": "Jazz Tower - Lahore",
+        "location": "Lahore, Punjab, Pakistan",
+        "latitude": 31.5204,
+        "longitude": 74.3587,
+        "ip": "192.168.15.158",
+        "port": 8008,
+        "status": "active"
+    },
+    {
+        "id": "tower-9",
+        "name": "Telenor Tower - Peshawar",
+        "location": "Peshawar, Khyber Pakhtunkhwa, Pakistan",
+        "latitude": 34.0151,
+        "longitude": 71.5249,
+        "ip": "192.168.15.159",
+        "port": 8009,
+        "status": "active"
+    },
+    {
+        "id": "tower-10",
+        "name": "Warid Tower - Faisalabad",
+        "location": "Faisalabad, Punjab, Pakistan",
+        "latitude": 31.4180,
+        "longitude": 73.0790,
+        "ip": "192.168.15.160",
+        "port": 8010,
+        "status": "active"
+    },
+    {
+        "id": "tower-11",
+        "name": "Ufone Tower - Multan",
+        "location": "Multan, Punjab, Pakistan",
+        "latitude": 30.1575,
+        "longitude": 71.5249,
+        "ip": "192.168.15.161",
+        "port": 8011,
+        "status": "active"
+    },
+    {
+        "id": "tower-12",
+        "name": "SCO Tower - Quetta",
+        "location": "Quetta, Balochistan, Pakistan",
+        "latitude": 30.1798,
+        "longitude": 66.9750,
+        "ip": "192.168.15.162",
+        "port": 8012,
+        "status": "active"
+    },
+    {
+        "id": "tower-13",
+        "name": "PTCL Tower - Karachi",
+        "location": "Karachi, Sindh, Pakistan",
+        "latitude": 24.8607,
+        "longitude": 67.0011,
+        "ip": "192.168.15.163",
+        "port": 8013,
+        "status": "active"
+    },
+    {
+        "id": "tower-14",
+        "name": "Zong Tower - Hyderabad",
+        "location": "Hyderabad, Sindh, Pakistan",
+        "latitude": 25.3960,
+        "longitude": 68.3578,
+        "ip": "192.168.15.164",
+        "port": 8014,
+        "status": "active"
+    },
+    {
+        "id": "tower-15",
+        "name": "Jazz Tower - Sukkur",
+        "location": "Sukkur, Sindh, Pakistan",
+        "latitude": 27.7052,
+        "longitude": 68.8574,
+        "ip": "192.168.15.165",
+        "port": 8015,
+        "status": "active"
+    },
+    {
+        "id": "tower-16",
+        "name": "Ufone Tower - Bahawalpur",
+        "location": "Bahawalpur, Punjab, Pakistan",
+        "latitude": 29.3544,
+        "longitude": 71.6911,
+        "ip": "192.168.15.166",
+        "port": 8016,
+        "status": "maintenance"
+    },
+    {
+        "id": "tower-17",
+        "name": "Telenor Tower - Abbottabad",
+        "location": "Abbottabad, Khyber Pakhtunkhwa, Pakistan",
+        "latitude": 34.1463,
+        "longitude": 73.2114,
+        "ip": "192.168.15.167",
+        "port": 8017,
+        "status": "active"
+    },
+    {
+        "id": "tower-18",
+        "name": "SCO Tower - Gilgit",
+        "location": "Gilgit, Gilgit-Baltistan, Pakistan",
+        "latitude": 35.9208,
+        "longitude": 74.3089,
+        "ip": "192.168.15.168",
+        "port": 8018,
+        "status": "active"
+    },
+    {
+        "id": "tower-19",
+        "name": "SCO Tower - Skardu",
+        "location": "Skardu, Gilgit-Baltistan, Pakistan",
+        "latitude": 35.3359,
+        "longitude": 75.6333,
+        "ip": "192.168.15.169",
+        "port": 8019,
+        "status": "active"
+    },
+    {
+        "id": "tower-20",
+        "name": "PTCL Tower - Gwadar",
+        "location": "Gwadar, Balochistan, Pakistan",
+        "latitude": 25.1276,
+        "longitude": 62.3220,
+        "ip": "192.168.15.170",
+        "port": 8020,
+        "status": "active"
     }
+]
+
+TOWERS = {
+    tower["id"]: {
+        **tower,
+        "service_host": tower.get("service_host", tower["id"]),
+        "service_port": tower.get("service_port", tower["port"]),
+        "endpoints": list(tower.get("endpoints", DEFAULT_ENDPOINTS))
+    }
+    for tower in TOWER_DEFINITIONS
 }
 
 # Models
@@ -175,7 +291,9 @@ async def get_towers():
         tower_data = tower_info.copy()
         try:
             async with httpx.AsyncClient(timeout=2.0) as client:
-                response = await client.get(f"http://{tower_id}:800{tower_id[-1]}/status")
+                response = await client.get(
+                    f"http://{tower_info['service_host']}:{tower_info['service_port']}/status"
+                )
                 if response.status_code == 200:
                     tower_data["live_data"] = response.json()
         except:
@@ -196,7 +314,9 @@ async def get_tower(tower_id: str):
     # Try to get live data
     try:
         async with httpx.AsyncClient(timeout=2.0) as client:
-            response = await client.get(f"http://{tower_id}:800{tower_id[-1]}/status")
+            response = await client.get(
+                f"http://{tower_info['service_host']}:{tower_info['service_port']}/status"
+            )
             if response.status_code == 200:
                 tower_info["live_data"] = response.json()
     except:
@@ -218,7 +338,7 @@ async def execute_command(cmd_request: CommandRequest):
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
-                f"http://{tower_id}:800{tower_id[-1]}/execute",
+                f"http://{tower['service_host']}:{tower['service_port']}/execute",
                 json={"command": command}
             )
             return response.json()
@@ -233,7 +353,9 @@ async def get_tower_metrics(tower_id: str):
     
     try:
         async with httpx.AsyncClient(timeout=2.0) as client:
-            response = await client.get(f"http://{tower_id}:800{tower_id[-1]}/metrics")
+            response = await client.get(
+                f"http://{tower['service_host']}:{tower['service_port']}/metrics"
+            )
             return response.json()
     except Exception as e:
         return {"error": f"Failed to fetch metrics: {str(e)}"}
@@ -246,7 +368,9 @@ async def get_tower_config(tower_id: str):
     
     try:
         async with httpx.AsyncClient(timeout=2.0) as client:
-            response = await client.get(f"http://{tower_id}:800{tower_id[-1]}/config")
+            response = await client.get(
+                f"http://{tower['service_host']}:{tower['service_port']}/config"
+            )
             return response.json()
     except Exception as e:
         return {"error": f"Failed to fetch config: {str(e)}"}

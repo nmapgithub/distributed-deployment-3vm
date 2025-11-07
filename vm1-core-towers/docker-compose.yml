@@ -39,6 +39,14 @@ services:
       - PYTHONUNBUFFERED=1
       - TOWER_ID=tower-1
       - TOWER_NAME=Jio Tower - Muzaffarabad
+      - TOWER_LOCATION=Muzaffarabad, Azad Kashmir, Pakistan
+      - TOWER_FREQUENCY=2100 MHz
+      - TOWER_COVERAGE=15 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2020-05-15
+      - TOWER_SERIAL=ABC-JMU-001
+      - TOWER_PORT=8001
+      - TOWER_STATUS=active
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
@@ -62,6 +70,14 @@ services:
       - PYTHONUNBUFFERED=1
       - TOWER_ID=tower-2
       - TOWER_NAME=Vodafone Idea Tower - Jhelum
+      - TOWER_LOCATION=Jhelum, Punjab, Pakistan
+      - TOWER_FREQUENCY=1800 MHz
+      - TOWER_COVERAGE=12 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2019-08-22
+      - TOWER_SERIAL=ABC-JHL-002
+      - TOWER_PORT=8002
+      - TOWER_STATUS=active
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
@@ -85,6 +101,14 @@ services:
       - PYTHONUNBUFFERED=1
       - TOWER_ID=tower-3
       - TOWER_NAME=Bharti Airtel Tower - Mirpur
+      - TOWER_LOCATION=Mirpur, Azad Kashmir, Pakistan
+      - TOWER_FREQUENCY=2300 MHz
+      - TOWER_COVERAGE=14 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2018-11-05
+      - TOWER_SERIAL=ABC-MIR-003
+      - TOWER_PORT=8003
+      - TOWER_STATUS=active
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
@@ -108,6 +132,14 @@ services:
       - PYTHONUNBUFFERED=1
       - TOWER_ID=tower-4
       - TOWER_NAME=BSNL Tower - Sialkot
+      - TOWER_LOCATION=Sialkot, Punjab, Pakistan
+      - TOWER_FREQUENCY=1800 MHz
+      - TOWER_COVERAGE=16 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2017-03-18
+      - TOWER_SERIAL=ABC-SLK-004
+      - TOWER_PORT=8004
+      - TOWER_STATUS=active
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
@@ -131,6 +163,14 @@ services:
       - PYTHONUNBUFFERED=1
       - TOWER_ID=tower-5
       - TOWER_NAME=Reliance Jio Tower - Gujrat
+      - TOWER_LOCATION=Gujrat, Punjab, Pakistan
+      - TOWER_FREQUENCY=2100 MHz
+      - TOWER_COVERAGE=13 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2018-01-27
+      - TOWER_SERIAL=ABC-GRT-005
+      - TOWER_PORT=8005
+      - TOWER_STATUS=active
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
@@ -154,9 +194,451 @@ services:
       - PYTHONUNBUFFERED=1
       - TOWER_ID=tower-6
       - TOWER_NAME=Vodafone Tower - Rawalpindi
+      - TOWER_LOCATION=Rawalpindi, Punjab, Pakistan
+      - TOWER_FREQUENCY=2600 MHz
+      - TOWER_COVERAGE=18 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2016-06-11
+      - TOWER_SERIAL=ABC-RWP-006
+      - TOWER_PORT=8006
+      - TOWER_STATUS=active
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 7 - Islamabad
+  tower-7:
+    build:
+      context: ./bts-tower-7
+      dockerfile: Dockerfile
+    container_name: tower-7-islamabad
+    hostname: tower-7-islamabad
+    ports:
+      - "8007:8007"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.17
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-7
+      - TOWER_NAME=Zong Tower - Islamabad
+      - TOWER_LOCATION=Islamabad Capital Territory, Pakistan
+      - TOWER_FREQUENCY=3500 MHz
+      - TOWER_COVERAGE=20 km radius
+      - TOWER_TECHNOLOGY=5G NSA
+      - TOWER_INSTALLED_DATE=2021-09-01
+      - TOWER_SERIAL=ABC-ISB-007
+      - TOWER_PORT=8007
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 8 - Lahore
+  tower-8:
+    build:
+      context: ./bts-tower-8
+      dockerfile: Dockerfile
+    container_name: tower-8-lahore
+    hostname: tower-8-lahore
+    ports:
+      - "8008:8008"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.18
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-8
+      - TOWER_NAME=Jazz Tower - Lahore
+      - TOWER_LOCATION=Lahore, Punjab, Pakistan
+      - TOWER_FREQUENCY=2600 MHz
+      - TOWER_COVERAGE=22 km radius
+      - TOWER_TECHNOLOGY=5G NSA
+      - TOWER_INSTALLED_DATE=2022-02-12
+      - TOWER_SERIAL=ABC-LHE-008
+      - TOWER_PORT=8008
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8008/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 9 - Peshawar
+  tower-9:
+    build:
+      context: ./bts-tower-9
+      dockerfile: Dockerfile
+    container_name: tower-9-peshawar
+    hostname: tower-9-peshawar
+    ports:
+      - "8009:8009"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.19
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-9
+      - TOWER_NAME=Telenor Tower - Peshawar
+      - TOWER_LOCATION=Peshawar, Khyber Pakhtunkhwa, Pakistan
+      - TOWER_FREQUENCY=2300 MHz
+      - TOWER_COVERAGE=18 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2017-07-19
+      - TOWER_SERIAL=ABC-PSH-009
+      - TOWER_PORT=8009
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8009/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 10 - Faisalabad
+  tower-10:
+    build:
+      context: ./bts-tower-10
+      dockerfile: Dockerfile
+    container_name: tower-10-faisalabad
+    hostname: tower-10-faisalabad
+    ports:
+      - "8010:8010"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.20
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-10
+      - TOWER_NAME=Warid Tower - Faisalabad
+      - TOWER_LOCATION=Faisalabad, Punjab, Pakistan
+      - TOWER_FREQUENCY=1800 MHz
+      - TOWER_COVERAGE=15 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2016-04-30
+      - TOWER_SERIAL=ABC-FSD-010
+      - TOWER_PORT=8010
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 11 - Multan
+  tower-11:
+    build:
+      context: ./bts-tower-11
+      dockerfile: Dockerfile
+    container_name: tower-11-multan
+    hostname: tower-11-multan
+    ports:
+      - "8011:8011"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.21
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-11
+      - TOWER_NAME=Ufone Tower - Multan
+      - TOWER_LOCATION=Multan, Punjab, Pakistan
+      - TOWER_FREQUENCY=2100 MHz
+      - TOWER_COVERAGE=17 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2018-05-22
+      - TOWER_SERIAL=ABC-MLT-011
+      - TOWER_PORT=8011
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8011/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 12 - Quetta
+  tower-12:
+    build:
+      context: ./bts-tower-12
+      dockerfile: Dockerfile
+    container_name: tower-12-quetta
+    hostname: tower-12-quetta
+    ports:
+      - "8012:8012"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.22
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-12
+      - TOWER_NAME=SCO Tower - Quetta
+      - TOWER_LOCATION=Quetta, Balochistan, Pakistan
+      - TOWER_FREQUENCY=900 MHz
+      - TOWER_COVERAGE=40 km radius
+      - TOWER_TECHNOLOGY=3G UMTS
+      - TOWER_INSTALLED_DATE=2015-10-08
+      - TOWER_SERIAL=ABC-QTA-012
+      - TOWER_PORT=8012
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8012/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 13 - Karachi
+  tower-13:
+    build:
+      context: ./bts-tower-13
+      dockerfile: Dockerfile
+    container_name: tower-13-karachi
+    hostname: tower-13-karachi
+    ports:
+      - "8013:8013"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.23
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-13
+      - TOWER_NAME=PTCL Tower - Karachi
+      - TOWER_LOCATION=Karachi, Sindh, Pakistan
+      - TOWER_FREQUENCY=3600 MHz
+      - TOWER_COVERAGE=25 km radius
+      - TOWER_TECHNOLOGY=5G SA
+      - TOWER_INSTALLED_DATE=2023-01-15
+      - TOWER_SERIAL=ABC-KHI-013
+      - TOWER_PORT=8013
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8013/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 14 - Hyderabad
+  tower-14:
+    build:
+      context: ./bts-tower-14
+      dockerfile: Dockerfile
+    container_name: tower-14-hyderabad
+    hostname: tower-14-hyderabad
+    ports:
+      - "8014:8014"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.24
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-14
+      - TOWER_NAME=Zong Tower - Hyderabad
+      - TOWER_LOCATION=Hyderabad, Sindh, Pakistan
+      - TOWER_FREQUENCY=2600 MHz
+      - TOWER_COVERAGE=19 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2019-12-04
+      - TOWER_SERIAL=ABC-HYD-014
+      - TOWER_PORT=8014
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8014/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 15 - Sukkur
+  tower-15:
+    build:
+      context: ./bts-tower-15
+      dockerfile: Dockerfile
+    container_name: tower-15-sukkur
+    hostname: tower-15-sukkur
+    ports:
+      - "8015:8015"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.25
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-15
+      - TOWER_NAME=Jazz Tower - Sukkur
+      - TOWER_LOCATION=Sukkur, Sindh, Pakistan
+      - TOWER_FREQUENCY=1800 MHz
+      - TOWER_COVERAGE=16 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2017-03-21
+      - TOWER_SERIAL=ABC-SKR-015
+      - TOWER_PORT=8015
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8015/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 16 - Bahawalpur
+  tower-16:
+    build:
+      context: ./bts-tower-16
+      dockerfile: Dockerfile
+    container_name: tower-16-bahawalpur
+    hostname: tower-16-bahawalpur
+    ports:
+      - "8016:8016"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.26
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-16
+      - TOWER_NAME=Ufone Tower - Bahawalpur
+      - TOWER_LOCATION=Bahawalpur, Punjab, Pakistan
+      - TOWER_FREQUENCY=900 MHz
+      - TOWER_COVERAGE=18 km radius
+      - TOWER_TECHNOLOGY=3G UMTS
+      - TOWER_INSTALLED_DATE=2014-09-10
+      - TOWER_SERIAL=ABC-BWP-016
+      - TOWER_PORT=8016
+      - TOWER_STATUS=maintenance
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8016/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 17 - Abbottabad
+  tower-17:
+    build:
+      context: ./bts-tower-17
+      dockerfile: Dockerfile
+    container_name: tower-17-abbottabad
+    hostname: tower-17-abbottabad
+    ports:
+      - "8017:8017"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.27
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-17
+      - TOWER_NAME=Telenor Tower - Abbottabad
+      - TOWER_LOCATION=Abbottabad, Khyber Pakhtunkhwa, Pakistan
+      - TOWER_FREQUENCY=2100 MHz
+      - TOWER_COVERAGE=14 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2018-06-13
+      - TOWER_SERIAL=ABC-ABB-017
+      - TOWER_PORT=8017
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8017/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 18 - Gilgit
+  tower-18:
+    build:
+      context: ./bts-tower-18
+      dockerfile: Dockerfile
+    container_name: tower-18-gilgit
+    hostname: tower-18-gilgit
+    ports:
+      - "8018:8018"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.28
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-18
+      - TOWER_NAME=SCO Tower - Gilgit
+      - TOWER_LOCATION=Gilgit, Gilgit-Baltistan, Pakistan
+      - TOWER_FREQUENCY=1800 MHz
+      - TOWER_COVERAGE=12 km radius
+      - TOWER_TECHNOLOGY=4G LTE
+      - TOWER_INSTALLED_DATE=2020-02-18
+      - TOWER_SERIAL=ABC-GLT-018
+      - TOWER_PORT=8018
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8018/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 19 - Skardu
+  tower-19:
+    build:
+      context: ./bts-tower-19
+      dockerfile: Dockerfile
+    container_name: tower-19-skardu
+    hostname: tower-19-skardu
+    ports:
+      - "8019:8019"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.29
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-19
+      - TOWER_NAME=SCO Tower - Skardu
+      - TOWER_LOCATION=Skardu, Gilgit-Baltistan, Pakistan
+      - TOWER_FREQUENCY=700 MHz
+      - TOWER_COVERAGE=35 km radius
+      - TOWER_TECHNOLOGY=4G LTE Advanced
+      - TOWER_INSTALLED_DATE=2021-04-07
+      - TOWER_SERIAL=ABC-SKD-019
+      - TOWER_PORT=8019
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8019/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # BTS Tower 20 - Gwadar
+  tower-20:
+    build:
+      context: ./bts-tower-20
+      dockerfile: Dockerfile
+    container_name: tower-20-gwadar
+    hostname: tower-20-gwadar
+    ports:
+      - "8020:8020"
+    networks:
+      ntro_network:
+        ipv4_address: 172.25.0.30
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TOWER_ID=tower-20
+      - TOWER_NAME=PTCL Tower - Gwadar
+      - TOWER_LOCATION=Gwadar, Balochistan, Pakistan
+      - TOWER_FREQUENCY=3500 MHz
+      - TOWER_COVERAGE=28 km radius
+      - TOWER_TECHNOLOGY=5G SA
+      - TOWER_INSTALLED_DATE=2022-11-25
+      - TOWER_SERIAL=ABC-GWD-020
+      - TOWER_PORT=8020
+      - TOWER_STATUS=active
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8020/health"]
       interval: 30s
       timeout: 10s
       retries: 3
