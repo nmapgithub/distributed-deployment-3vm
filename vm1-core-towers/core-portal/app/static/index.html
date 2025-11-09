@@ -418,6 +418,26 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+
+        .disruption-zone {
+            animation: blink 2s infinite;
+        }
+
+        .leaflet-tooltip.disruption-tooltip {
+            background: rgba(211, 47, 47, 0.85);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            box-shadow: 0 0 15px rgba(211, 47, 47, 0.6);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .leaflet-tooltip.disruption-tooltip::before {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -493,6 +513,7 @@
         let currentBaseLayer = null;
         let localTileErrorCount = 0;
         let towerConnections = [];
+        let disruptionZones = [];
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -768,6 +789,8 @@
             towerMarkers = [];
             towerConnections.forEach(line => map.removeLayer(line));
             towerConnections = [];
+            disruptionZones.forEach(layer => map.removeLayer(layer));
+            disruptionZones = [];
 
             // Draw connections between towers first (so they appear under markers)
             drawTowerConnections();
@@ -805,6 +828,26 @@
                 });
 
                 towerMarkers.push(marker);
+
+                if (isPoweredOff) {
+                    const disruptionCircle = L.circle([tower.latitude, tower.longitude], {
+                        radius: 20000,
+                        color: '#ff4444',
+                        weight: 2,
+                        fillColor: '#ff4444',
+                        fillOpacity: 0.15,
+                        dashArray: '8, 12',
+                        className: 'disruption-zone'
+                    }).addTo(map);
+
+                    disruptionCircle.bindTooltip('Comm Disrupted', {
+                        permanent: true,
+                        direction: 'center',
+                        className: 'disruption-tooltip'
+                    }).openTooltip();
+
+                    disruptionZones.push(disruptionCircle);
+                }
             });
         }
 
