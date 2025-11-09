@@ -115,6 +115,10 @@
             height: 100%;
         }
 
+        .leaflet-interactive.connection-line {
+            filter: drop-shadow(0 0 6px rgba(0, 255, 136, 0.6));
+        }
+
         .offline-notice {
             position: absolute;
             top: 15px;
@@ -849,9 +853,11 @@
                         [[tower1.latitude, tower1.longitude], [tower2.latitude, tower2.longitude]],
                         {
                             color: '#00ff88',
-                            weight: 1.5,
-                            opacity: 0.45,
-                            dashArray: '8, 12',
+                            weight: 4,
+                            opacity: 0.8,
+                            dashArray: '10, 14',
+                            lineCap: 'round',
+                            lineJoin: 'round',
                             className: 'connection-line'
                         }
                     ).addTo(map);
